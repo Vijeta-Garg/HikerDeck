@@ -1,38 +1,23 @@
 import time
 import framebuf 
-from machine import Pin, SPI, Timer, I2C
-import bmp280
-import gc
+from machine import Pin
+from chineseNum import CHINESE_NUM_FONTS
 
-# Pin definitions directly from your schematic
 PIN_CS   = 21 
 PIN_DC   = 22  
 PIN_RST  = 26 
 PIN_BUSY = 27  
 
-EPD_WIDTH  = 200
-EPD_HEIGHT = 200
-BUFFER_SIZE = 5000  # 200x200 / 8 bits
-
-sensor_needs_read = False    
-
-i2c = I2C(1, sda=Pin(2), scl=Pin(3), freq=100000)
-bmp = bmp280.BMP280(i2c)
-bmp.oversample(bmp280.BMP280_OS_HIGH)
-bmp.use_case(bmp280.BMP280_CASE_WEATHER)
-
-gc.collect()
-
 class EPD_1Inch54_3Color:
-    def __init__(self):
+    # Accept  shared spi object from the main file constructor
+    def __init__(self, shared_SPI_bus):
         self.cs   = Pin(PIN_CS, Pin.OUT, value=1)
         self.dc   = Pin(PIN_DC, Pin.OUT, value=0)
         self.rst  = Pin(PIN_RST, Pin.OUT, value=1)
         self.busy = Pin(PIN_BUSY, Pin.IN, Pin.PULL_DOWN)
-        
-        # Hardware SPI1 matching your layout
-        self.spi = SPI(1, baudrate=2000000, polarity=0, phase=0, sck=Pin(10), mosi=Pin(11))
+        self.spi  = shared_SPI_bus
 
+#all just lib stuff 
     def write_cmd(self, cmd):
         self.dc.value(0)
         self.cs.value(0)
@@ -58,17 +43,16 @@ class EPD_1Inch54_3Color:
     def hw_init(self):
         self.reset()
         self.chkstatus()
-        self.write_cmd(0x12) # SWRESET
+        self.write_cmd(0x12) 
         self.chkstatus()
         
         self.write_cmd(0x01) 
         self.write_data(0xC7)
         self.write_data(0x00)
         self.write_data(0x00)
-
-        # --- FIX HERE: Changed from 0x01 to 0x03 to make text write forwards ---
-        self.write_cmd(0x11) 
-        self.write_data(0x03) # 0x03 = X increment, Y increment (Standard Orientation)
+#make SURE this is 0x11 otherwise gibberish
+        self.write_cmd(0x03) 
+        self.write_data(0x11) 
         
         self.write_cmd(0x44) 
         self.write_data(0x00)
@@ -102,76 +86,62 @@ class EPD_1Inch54_3Color:
 
     def display_frame(self, black_buffer, red_buffer=None):
         self.write_cmd(0x24)
-        for i in range(BUFFER_SIZE):
+        for i in range(5000):
             self.write_data(black_buffer[i])
             
         self.write_cmd(0x26)
-        for i in range(BUFFER_SIZE):
+        for i in range(5000):
             if red_buffer is not None:
                 self.write_data(red_buffer[i])
             else:
                 self.write_data(0x00) 
-                
-        self.update()
-
-    def display_clear(self):
-        self.write_cmd(0x24)
-        for i in range(BUFFER_SIZE):
-            self.write_data(0xFF) 
-        self.write_cmd(0x26)
-        for i in range(BUFFER_SIZE):
-            self.write_data(0x00) 
         self.update()
 
     def sleep(self):
         self.write_cmd(0x10)
         self.write_data(0x01)
         time.sleep_ms(10)
-        
+        self.cs.value(1)
 
-def timer_sensor_cb(t):
-    global sensor_needs_read
-    sensor_needs_read = True
 
-timer_b = Timer(period=1000, mode=Timer.PERIODIC, callback=timer_sensor_cb)
+def num_to_chinese_digits(num_str):
+    mapping = {
+        '0': '〇', '1': '一', '2': '二', '3': '三', '4': '四',
+        '5': '五', '6': '六', '7': '七', '8': '八', '9': '九',
+    }
+    converted = ""
+    for char in num_str:
+        if char in mapping:
+            converted += mapping[char]
+        else:
+            converted += char
+    return converted
 
-def senseAlt():
-    print("pressure: {}Pa".format(bmp.pressure))
-    print("altitude: {}".format(bmp.altitude))
+def draw_hybrid_text(fb, text, start_x, start_y, color, scale=1):
+ 
+    current_x = start_x
+    
+    for char in text:
+        if char in CHINESE_NUM_FONTS:
+            bitmap = CHINESE_NUM_FONTS[char]
+            
+            for row in range(16):
+                byte_left = bitmap[row * 2]       # Left segment block byte
+                byte_right = bitmap[row * 2 + 1]   # Right segment block byte
+                
+                for col in range(8):
+                    if (byte_left & (0x01 << col)):
+                        px = current_x + (col * scale)
+                        py = start_y + (row * scale)
+                        fb.fill_rect(px, py, scale, scale, color)
+                
+                for col in range(8):
+                    if (byte_right & (0x01 << col)):
+                        px = current_x + ((col + 8) * scale)
+                        py = start_y + (row * scale)
+                        fb.fill_rect(px, py, scale, scale, color)
+                                
+            current_x += 16 * scale
+        else:
+            current_x += 16 * scale
 
-# --- Main Program Execution ---
-if __name__ == '__main__':
-    print("Initializing Display...")
-    epd = EPD_1Inch54_3Color()
-    epd.hw_init()
-    
-    print("Clearing display cleanly...")
-    epd.display_clear()
-    time.sleep(1)
-    
-    # FIX: Pre-fill raw memory blocks to match target baseline configurations
-    black_data = bytearray([0xFF] * BUFFER_SIZE)
-    red_data   = bytearray([0x00] * BUFFER_SIZE)
-    
-    fb_black = framebuf.FrameBuffer(black_data, EPD_WIDTH, EPD_HEIGHT, framebuf.MONO_HMSB)
-    fb_red   = framebuf.FrameBuffer(red_data, EPD_WIDTH, EPD_HEIGHT, framebuf.MONO_HMSB)
-    
-    fb_black.fill(1) # 1 = White background
-    fb_red.fill(0)   # 0 = Transparent/No red background
-    
-    # Read fresh sensor data before drawing to screen
-    try:
-        stPss = "pressure: {:.0f}Pa".format(bmp.pressure)
-    except Exception:
-        stPss = "Sensor Error"
-
-    # Draw Text on the Black Layer
-    print("Writing text to memory...")
-    # Shifted X position from 80 to 10 so long pressure strings do not clip off-screen
-    fb_black.text(stPss, 10, 95, 0) # 0 = Black text
-    
-    print("Refreshing screen panels properly...")
-    epd.display_frame(black_data, red_data)
-    
-    print("Done! Putting hardware to sleep.")
-    epd.sleep()
