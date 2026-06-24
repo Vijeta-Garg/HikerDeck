@@ -3,20 +3,31 @@
 My inspiration: 
 My Instagram feed inspired me to make a cyberdeck, offline computers housed in cute compartments one could access offline. My sister had her birthday just a few weeks ago, so I wanted to gift her a cyberdeck she'd love. User needs: she is into hiking, reading, and learning new languages (currently Chinese). So I made a multilingual e-reading environment-sensing cyberdeck that would be useful on a hike. For example, it can load up a "hiking survival guide" on an offline e-reader and also tell you the altitude you are at in the hike in Chinese numerals. 
 
+<img width="1776" height="1022" alt="image" src="https://github.com/user-attachments/assets/40ca1345-b739-4456-bed3-6bcaf5c753b0" />
+
 What does the project do?
 The project is a dual-display cyberdeck optimized for hiking. It is an offline "mini computer" which can scroll through files such as a hiking survival guide. At the same time, on another display it can display the current pressure and altitude a hiker is at in Chinese lettering. The cyberdeck itself is controlled by 3 CherryMX switches and is housed inside a sunglass case! 
 
+Schematic:
+Please note! The hikerdeck is currently perfboarded not PCBed! The entire wiring is contained inside the casing and once spread out it looks like this:
+<img width="2470" height="1568" alt="image" src="https://github.com/user-attachments/assets/a1266ec9-c9fb-4093-b475-64de4d5bee3d" />
+
+
+Layout:
+I drew a small diagram to help you understand where everything fits inside the casing! 
+
+
+Casing:
+Currently not 3D printed yet, but the CAD files are ready and I am using a cardboard case right now! 
+
 
 How does it all fit together?
-The sunglass case has different "layers":
-
+The sunglass case has different "layers": 
 The top layer is the two displays which live on the lid 
-
 Below that, there are 3 mounted CherryMX switches and a port to connect to the pico underneath. 
-
 And on the very bottom under the switches there's the perfboard where the raspberry pico w, battery, and environment sensor live. 
 
-<img width="1776" height="1022" alt="image" src="https://github.com/user-attachments/assets/40ca1345-b739-4456-bed3-6bcaf5c753b0" />
+<img width="1414" height="2000" alt="image" src="https://github.com/user-attachments/assets/fd1db1d5-36d1-447b-92e2-26027b4d0c70" />
 
 
 **here is the link to my demo video!:** https://youtu.be/0BxvbPZM9zg
