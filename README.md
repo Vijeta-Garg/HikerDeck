@@ -44,6 +44,9 @@ This is a cut open view of the whole case so you can see that there is a "top la
 
 ^This is how the entire case would look assembled together, probably with screws to hold top and bottom layers in place. CAD folder has a 3D design version of the entire casing together and then parts of the casing which may be easier to CAD.
 
+This is the source link to view my CAD on tinkerCAD: https://www.tinkercad.com/things/hDXkVz4miPq/edit?returnTo=%2Fdashboard&sharecode=PR3qWPxDqGIZ3gvMZXuKd6lOJFHs_dO6xHJXdqaVNjE
+
+
 
 # How to build this?
 1. Import firmware to VS code and connect pico w to VS code via pico extension on VS code 
