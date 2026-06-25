@@ -38,7 +38,9 @@ Currently not 3D printed yet, but the CAD files are ready and I am using a cardb
 
 This is a cut open view of the whole case so you can see that there is a "top layer" where the displays are housed and a "bottom layer" with space for wiring and pico w. 
 
-<img width="1108" height="800" alt="image" src="https://github.com/user-attachments/assets/498e3388-6381-4c54-9f1b-de5aa3ab3cb7" />
+
+<img width="1448" height="988" alt="image" src="https://github.com/user-attachments/assets/342c7891-fdca-46d9-a60f-73bf6fc7014b" />
+
 
 ^This is how the entire case would look assembled together, probably with screws to hold top and bottom layers in place. CAD folder has a 3D design version of the entire casing together and then parts of the casing which may be easier to CAD.
 
