@@ -44,7 +44,7 @@ This is a cut open view of the whole case so you can see that there is a "top la
 
 ^This is how the entire case would look assembled together, probably with screws to hold top and bottom layers in place. CAD folder has a 3D design version of the entire casing together and then parts of the casing which may be easier to CAD.
 
-# How does it all fit together? *NOTE ADD MORE HERE*
+# How does it all fit together? 
 The sunglass case has different "layers": 
 The top layer is the two displays which live on the lid 
 Below that, there are 3 mounted CherryMX switches and a port to connect to the pico underneath. 
