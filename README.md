@@ -32,6 +32,9 @@ I drew a small diagram to help you understand where everything fits inside the c
 Currently not 3D printed yet, but the CAD files are ready and I am using a cardboard case right now! 
 <img width="1108" height="900" alt="image" src="https://github.com/user-attachments/assets/01336b22-bec8-4ccc-ad4d-c275af80a395" />
 
+<img width="1142" height="662" alt="image" src="https://github.com/user-attachments/assets/bc3934af-a321-4b16-8dbe-09aeaf2c8bde" />
+
+
 
 # How does it all fit together? *NOTE ADD MORE HERE*
 The sunglass case has different "layers": 
